@@ -1,4 +1,4 @@
-package com.discretesolutions.mediabackup;
+package com.discretesolutions.mediatransfer;
 
 import android.annotation.SuppressLint;
 
@@ -12,7 +12,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowInsets;
 
-import com.discretesolutions.mediabackup.databinding.ActivityFullscreenBinding;
+import com.discretesolutions.mediatransfer.databinding.ActivityFullscreenBinding;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.

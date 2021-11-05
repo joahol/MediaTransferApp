@@ -1,4 +1,4 @@
-package com.discretesolutions.mediabackup;
+package com.discretesolutions.mediatransfer;
 
 import org.junit.Test;
 
