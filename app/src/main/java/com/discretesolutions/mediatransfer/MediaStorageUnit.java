@@ -1,27 +1,48 @@
 package com.discretesolutions.mediatransfer;
-//responsible for communicating with media storage
 
-import android.app.Activity;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.provider.MediaStore;
+import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MediaStorageUnit {
-
 
 /*
 @Description query the mediastore object for mediafiles of given type
 @Parameter Type of media to query.
  */
+ArrayList<ImageItem> items;
+    public MediaStorageUnit(){}
+
 public void queryMedia(Context context) {
-    String projection[] = {};
-    String select = "select *";
+        items = new ArrayList<ImageItem>();
+    String projection[] = {MediaStore.Images.Media._ID, MediaStore.Images.ImageColumns.DATE_ADDED};
+    String select = MediaStore.Images.Media._ID+"";
     String selectArgs[] = {};
-    String orderBy = "";
+    String orderBy = MediaStore.Images.Media.DATE_ADDED;
 
-    Cursor cursor = ((Activity) context).getApplicationContext().getContentResolver().query(
+    //requestPermissions(context,new String[], {Manifest.permission.READ_EXTERNAL_STORAGE},)
+    Cursor cursor = (context.getApplicationContext().getContentResolver().query(
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-            projection, select, selectArgs, orderBy);
+            projection, select, selectArgs, orderBy));
 
+    String[] names = cursor.getColumnNames();
+    for(String s: names){
+        Log.v("name:",s);
+    }
+    while (cursor.moveToNext()){
+        ImageItem a = new ImageItem(cursor.getString(1));
+        Log.v("item:",a.getId());
+    }
+}
+public List<ImageItem> getImageItems(){
+
+        return items;
 }
 }
+
+

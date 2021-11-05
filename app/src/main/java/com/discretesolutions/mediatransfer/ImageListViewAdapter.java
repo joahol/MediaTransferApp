@@ -1,20 +1,27 @@
 package com.discretesolutions.mediatransfer;
 
+import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.ImageView;
+
+import java.util.ArrayList;
 
 public class ImageListViewAdapter extends BaseAdapter {
-
+private Context context;
+private ArrayList<ImageItem> imgItems;
 
     @Override
     public int getCount() {
-        return 0;
+        return imgItems.size();
     }
 
     @Override
     public Object getItem(int i) {
-        return null;
+        return imgItems.get(i);
     }
 
     @Override
@@ -23,7 +30,15 @@ public class ImageListViewAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
-        return null;
+    public View getView(int pos, View view, ViewGroup viewGroup) {
+    if(view ==null){
+        view = LayoutInflater.from(context).inflate(R.layout.imagelistitemlayout, viewGroup,false);
+        ImageItem imt = (ImageItem) getItem(pos);
+        ImageView imv = (ImageView)view.findViewById(R.id.imageView);
+        CheckBox chSelect = (CheckBox)view.findViewById(R.id.chkTransfer);
+        chSelect.setText(imt.getId());
+        imv.setImageBitmap(imt.getThumbnail());
+    }
+        return view;
     }
 }

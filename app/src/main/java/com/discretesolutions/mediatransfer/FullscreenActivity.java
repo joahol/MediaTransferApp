@@ -1,13 +1,17 @@
 package com.discretesolutions.mediatransfer;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowInsets;
@@ -111,21 +115,18 @@ public class FullscreenActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         mVisible = true;
-        mControlsView = binding.fullscreenContentControls;
-        mContentView = binding.fullscreenContent;
+        MediaStorageUnit msu;
 
-        // Set up the user interaction to manually show or hide the system UI.
-        mContentView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toggle();
-            }
-        });
+        if(checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED){
+        Log.v("Permission:","Granted");
+             msu = new MediaStorageUnit();
+            msu.queryMedia(this);
+        }else{
+            Log.v("Permission:","FAILED");
+            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.ACCESS_MEDIA_LOCATION},1);
+        }
 
-        // Upon interacting with UI controls, delay any scheduled hide()
-        // operations to prevent the jarring behavior of controls going away
-        // while interacting with the UI.
-        binding.dummyButton.setOnTouchListener(mDelayHideTouchListener);
+
     }
 
     @Override
@@ -152,12 +153,12 @@ public class FullscreenActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.hide();
         }
-        mControlsView.setVisibility(View.GONE);
-        mVisible = false;
+//        mControlsView.setVisibility(View.GONE);
+  //      mVisible = false;
 
         // Schedule a runnable to remove the status and navigation bar after a delay
-        mHideHandler.removeCallbacks(mShowPart2Runnable);
-        mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY);
+    //    mHideHandler.removeCallbacks(mShowPart2Runnable);
+      //  mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY);
     }
 
     private void show() {
