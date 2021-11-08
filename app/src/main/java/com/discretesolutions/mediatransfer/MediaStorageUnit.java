@@ -20,7 +20,8 @@ ArrayList<ImageItem> items;
 
 public void queryMedia(Context context) {
         items = new ArrayList<ImageItem>();
-    String projection[] = {MediaStore.Images.Media._ID, MediaStore.Images.ImageColumns.DATE_ADDED};
+    String projection[] = {MediaStore.Images.Media._ID, MediaStore.Images.ImageColumns.DATE_ADDED,
+    MediaStore.Images.Thumbnails.DATA, MediaStore.Images.ImageColumns.SIZE};
     String select = MediaStore.Images.Media._ID+"";
     String selectArgs[] = {};
     String orderBy = MediaStore.Images.Media.DATE_ADDED;
@@ -36,10 +37,12 @@ public void queryMedia(Context context) {
     }
     while (cursor.moveToNext()){
         ImageItem a = new ImageItem(cursor.getString(1));
-        Log.v("item:",a.getId());
+        a.setThumbPath(cursor.getString(2));
+        items.add(a);
+        Log.v("item:",a.getId()+" "+a.getThumbPath()+" "+cursor.getString(3));
     }
 }
-public List<ImageItem> getImageItems(){
+public ArrayList<ImageItem> getImageItems(){
 
         return items;
 }

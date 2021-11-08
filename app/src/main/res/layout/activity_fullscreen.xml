@@ -6,11 +6,11 @@
     android:background="?attr/fullscreenBackgroundColor"
     android:theme="@style/ThemeOverlay.MediaBackup.FullscreenContainer"
     tools:context=".FullscreenActivity">
-<ListView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
 
-
-</ListView>
+    <ListView
+        android:id="@+id/lstItems"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </ListView>
 
 </FrameLayout>
