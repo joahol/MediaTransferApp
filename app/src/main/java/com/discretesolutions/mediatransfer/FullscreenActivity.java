@@ -31,6 +31,7 @@ import android.widget.Toast;
 
 import com.discretesolutions.mediatransfer.databinding.ActivityFullscreenBinding;
 
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Set;
 
@@ -71,9 +72,8 @@ private boolean avoid = true;//WHEN DEBUGGING IN EMULATOR SET THIS TO TRUE, DUE 
         btnConnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast availBTDev = Toast.makeText(getApplicationContext(),"Bluetooth", 0x33);
-                availBTDev.setText("Connecting");
-                availBTDev.show();
+                BTSelectorDialog btsd = new BTSelectorDialog();
+                btsd.show(getSupportFragmentManager(), "BTSelectorDialog");
             }
         });
 
@@ -149,7 +149,7 @@ private boolean avoid = true;//WHEN DEBUGGING IN EMULATOR SET THIS TO TRUE, DUE 
             Log.v("Permission:", "FAILED");
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.ACCESS_MEDIA_LOCATION}, 1);
         }
-
+//Fill the listview with images
         final ImageListViewAdapter adapter = new ImageListViewAdapter(this, msu.getImageItems());
         ListView lstv = (ListView) findViewById(R.id.lstItems);
         lstv.setAdapter(adapter);
@@ -165,8 +165,6 @@ private boolean avoid = true;//WHEN DEBUGGING IN EMULATOR SET THIS TO TRUE, DUE 
     });
     initialize();
 }
-
-
     }
 
     @Override
@@ -175,14 +173,8 @@ private boolean avoid = true;//WHEN DEBUGGING IN EMULATOR SET THIS TO TRUE, DUE 
 
 
     }
-private void initBluetooth(){
 
-   // Intent btTurnOn = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
- //   aResLauncher.launch(btTurnOn);
-   // pairedBtDevices = bAdapter.getBondedDevices();
-
-}
-
+    //Init bluetooth fetch available devices
     public void initialize(){
          Intent btTurnOn = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
         ActivityResult aResult = new ActivityResult(0,btTurnOn);
@@ -195,9 +187,12 @@ private void initBluetooth(){
         // aResLauncher.launch(aResult);
         bAdapter = BluetoothAdapter.getDefaultAdapter();
         pairedBtDevices = bAdapter.getBondedDevices();
+        ArrayList<String> btNameDev = new ArrayList<String>();
         for(BluetoothDevice bt : pairedBtDevices){
-            Log.v("BTDevice:",bt.getName());
+            btNameDev.add(bt.getName());
+            Log.v("BTDevice:", bt.getName());
         }
+        // ListView lvBTDevices = new ListView();
         /*
         pairedBtDevices = bAdapter.getBondedDevices();
         for(BluetoothDevice bt : pairedBtDevices){

@@ -34,9 +34,8 @@
         android:id="@+id/lstItems"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/lTop"
         android:layout_above="@id/lBottom"
-        ></ListView>
+        android:layout_below="@id/lTop"></ListView>
     <RelativeLayout
         android:id="@+id/lBottom"
         android:layout_width="match_parent"
