@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="listmode">
+        <item>Small thumbnail</item>
+        <item>Large thumbnail</item>
+        <item>List</item>
+    </string-array>
+
+</resources>
