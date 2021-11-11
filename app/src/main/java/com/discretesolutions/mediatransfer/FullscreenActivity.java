@@ -10,9 +10,11 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentManager;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -35,21 +37,17 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Set;
 
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- */
-public class FullscreenActivity extends AppCompatActivity {
+public class FullscreenActivity extends AppCompatActivity implements BTSelectorDialog.BluetoothDialogSelector {
 
 
-Spinner modeSpinner;
-Spinner selectTypeSpinner;
-BluetoothAdapter bAdapter;
-ActivityResultLauncher aResLauncher;
-private Button btnConnect;
-private Button btnTransfer;
-private Set<BluetoothDevice> pairedBtDevices;
-private int SelectMode=0;
+    Spinner modeSpinner;
+    Spinner selectTypeSpinner;
+    BluetoothAdapter bAdapter;
+    ActivityResultLauncher aResLauncher;
+    private Button btnConnect;
+    private Button btnTransfer;
+    private Set<BluetoothDevice> pairedBtDevices;
+    private int SelectMode = 0;
 private int DISPLAYMODE=0;
 
 //Constants for select and display modes
@@ -60,7 +58,7 @@ private final int DISPLAYMODE_LARGETHUMB=2;
 private final int DISPLAYMODE_LIST=3;
 
 
-private boolean avoid = true;//WHEN DEBUGGING IN EMULATOR SET THIS TO TRUE, DUE TO MISSING BLUETOOTH IN EMULATOR
+    private boolean avoid = false;//WHEN DEBUGGING IN EMULATOR SET THIS TO TRUE, DUE TO MISSING BLUETOOTH IN EMULATOR
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,8 +70,18 @@ private boolean avoid = true;//WHEN DEBUGGING IN EMULATOR SET THIS TO TRUE, DUE 
         btnConnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BTSelectorDialog btsd = new BTSelectorDialog();
-                btsd.show(getSupportFragmentManager(), "BTSelectorDialog");
+                Bundle bundle = new Bundle();
+                ArrayList<String> btArr = new ArrayList<String>();
+                for (BluetoothDevice Btd : pairedBtDevices) {
+                    btArr.add(Btd.getName());
+                }
+                bundle.putStringArrayList("btdevices", btArr);
+                FragmentManager fm = getSupportFragmentManager();
+
+                BTSelectorDialog btsd = BTSelectorDialog.newInstance("Bluetooth select", bundle);
+                btsd.show(fm, BTSelectorDialog.TAG);
+
+
             }
         });
 
@@ -192,20 +200,18 @@ private boolean avoid = true;//WHEN DEBUGGING IN EMULATOR SET THIS TO TRUE, DUE 
             btNameDev.add(bt.getName());
             Log.v("BTDevice:", bt.getName());
         }
-        // ListView lvBTDevices = new ListView();
-        /*
-        pairedBtDevices = bAdapter.getBondedDevices();
-        for(BluetoothDevice bt : pairedBtDevices){
-            Log.v("BTDevice:",bt.getName());
-        }
 
-         */
-       // ActivityResultContracts.StartActivityForResult(0,aResult);
 
-}
+    }
 
     private void show() {
 
     }
 
+    @Override
+    public void onBluetoothTargetSelected(String selectedDevice) {
+        Log.v("onbttargetselecte", selectedDevice);
+        Toast.makeText(this, selectedDevice, 0x21).show();
+        Log.v("onbttargetselecte", "Step 1");
+    }
 }
