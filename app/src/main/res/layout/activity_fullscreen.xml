@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:background="?attr/fullscreenBackgroundColor"
     android:theme="@style/ThemeOverlay.MediaBackup.FullscreenContainer"
+    android:backgroundTint="@color/white"
     tools:context=".FullscreenActivity">
 
 

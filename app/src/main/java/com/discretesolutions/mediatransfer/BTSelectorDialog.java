@@ -51,7 +51,6 @@ public class BTSelectorDialog extends DialogFragment {
         super.onViewCreated(current, instance);
         Log.v("onviewcreated", "waefa");
         btDevices = (ListView) getView().findViewById(R.id.lstvDevices);
-        //String[] lstTest = {"1","2","3","asdfasdf ad fas df","fawdfasdfasdfas"};
         ArrayAdapter<String> arrAdapter = new ArrayAdapter<String>(getContext(), R.layout.btselectoritem, R.id.tvBtItem, StringArrBt);
         btDevices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -61,8 +60,6 @@ public class BTSelectorDialog extends DialogFragment {
                 listener.onBluetoothTargetSelected(selected);
             }
         });
-
-
         btDevices.setAdapter(arrAdapter);
     }
 
