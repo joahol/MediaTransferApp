@@ -24,7 +24,7 @@ public class BTSelectorDialog extends DialogFragment {
     static ArrayList<String> StringArrBt;
 
     public interface BluetoothDialogSelector {
-        public void onBluetoothTargetSelected(String selectedDevice);
+        void onBluetoothTargetSelected(String selectedDevice);
     }
 
     public BTSelectorDialog() {
@@ -41,7 +41,7 @@ public class BTSelectorDialog extends DialogFragment {
     public static BTSelectorDialog newInstance(String title, Bundle bundle) {
         BTSelectorDialog diag = new BTSelectorDialog();
         bundle.putString("title", title);
-        StringArrBt = (ArrayList<String>) bundle.getStringArrayList("btdevices");
+        StringArrBt = bundle.getStringArrayList("btdevices");
         diag.setArguments(bundle);
         return diag;
     }
@@ -50,7 +50,7 @@ public class BTSelectorDialog extends DialogFragment {
     public void onViewCreated(View current, @Nullable Bundle instance) {
         super.onViewCreated(current, instance);
         Log.v("onviewcreated", "waefa");
-        btDevices = (ListView) getView().findViewById(R.id.lstvDevices);
+        btDevices = getView().findViewById(R.id.lstvDevices);
         ArrayAdapter<String> arrAdapter = new ArrayAdapter<String>(getContext(), R.layout.btselectoritem, R.id.tvBtItem, StringArrBt);
         btDevices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

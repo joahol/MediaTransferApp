@@ -3,11 +3,17 @@ package com.discretesolutions.mediatransfer;
 import android.content.Context;
 
 import java.util.Stack;
+/*
+Beskrivelse:
+Klasse for å håndtere kø over filer som skal overføres.
+Todo:
+-Vurder om Context har noe i denne klassen å gjør.
+ */
 
 public class TransferModel {
-    private Context context;
+    private final Context context;
 
-    private Stack<String> imagePaths;
+    private final Stack<String> imagePaths;
 
     public TransferModel(Context context) {
         this.context = context;

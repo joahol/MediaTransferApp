@@ -1,69 +1,68 @@
 package com.discretesolutions.mediatransfer;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentManager;
-
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
+
 import android.os.Bundle;
-import android.os.Handler;
+
 import android.util.Log;
-import android.view.MotionEvent;
+
 import android.view.View;
-import android.view.WindowInsets;
+import android.view.ViewStub;
+
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.discretesolutions.mediatransfer.databinding.ActivityFullscreenBinding;
-
 import java.security.Permission;
 import java.util.ArrayList;
-import java.util.Locale;
+
 import java.util.Set;
 
 public class FullscreenActivity extends AppCompatActivity implements BTSelectorDialog.BluetoothDialogSelector {
 
 
     private static final int ACECCESS_BLUETOOTH_SHARE = 0;
+    GridView gridView;
+    ListView listView;
+    ViewStub gridStub;
+    ViewStub listStub;
     Spinner modeSpinner;
     Spinner selectTypeSpinner;
     BluetoothAdapter bAdapter;
     ActivityResultLauncher aResLauncher;
-    private Button btnConnect;
     private Button btnTransfer;
     private Set<BluetoothDevice> pairedBtDevices;
     private int SelectMode = 0;
     private String selectedDeviceName;
     private int DISPLAYMODE = 0;
-    ImageListViewAdapter adapter;
+    BaseAdapter adapter;
     //Constants for select and display modes
     private final int SELECTMODE_ALL = 1;
     private final int SELECTMODE_SELECTED = 2;
     private final int DISPLAYMODE_SMALLTHUMB = 1;
     private final int DISPLAYMODE_LARGETHUMB = 2;
     private final int DISPLAYMODE_LIST = 3;
+
     TransferModel tModel;
     /*
         private ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(),
@@ -72,45 +71,53 @@ public class FullscreenActivity extends AppCompatActivity implements BTSelectorD
                         //Forklar bruker hvorfor tilatelsene trengs
                     }
                 });*/
-    private boolean avoid = false;//WHEN DEBUGGING IN EMULATOR SET THIS TO TRUE, DUE TO MISSING BLUETOOTH IN EMULATOR
+    private final boolean avoid = false;//WHEN DEBUGGING IN EMULATOR SET THIS TO TRUE, DUE TO MISSING BLUETOOTH IN EMULATOR
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
-        Thread t = new Thread() {
-            IncomingThreads ict = new IncomingThreads();
-        };
-        t.run();
         setContentView(R.layout.activity_fullscreen);
+
+        gridStub = findViewById(R.id.stub_grid);
+        listStub = findViewById(R.id.stub_list);
+        gridStub.inflate();
+        listStub.inflate();
+        listView = findViewById(R.id.lstItems);
+        gridView = findViewById(R.id.gridView);
+
+
         MediaStorageUnit msu = new MediaStorageUnit();
         tModel = new TransferModel(this);
         //Initialize Buttons
-        btnConnect = (Button) findViewById(R.id.btnConnect);
-        btnTransfer = (Button) findViewById(R.id.btnTransfer);
-        btnConnect.setOnClickListener(new View.OnClickListener() {
+        // btnConnect = findViewById(R.id.btnConnect);
+        btnTransfer = findViewById(R.id.btnTransfer);
+       /* btnConnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Bundle bundle = new Bundle();
+
+                //Find all available bluetooth devices
                 ArrayList<String> btArr = new ArrayList<String>();
                 for (BluetoothDevice Btd : pairedBtDevices) {
                     btArr.add(Btd.getName());
                 }
                 bundle.putStringArrayList("btdevices", btArr);
+                //Show a list of all available bluetooth devices.
                 FragmentManager fm = getSupportFragmentManager();
                 BTSelectorDialog btsd = BTSelectorDialog.newInstance("Bluetooth select", bundle);
                 btsd.show(fm, BTSelectorDialog.TAG);
-
-
             }
         });
-
+*/
         btnTransfer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Toast availBTDev = Toast.makeText(getApplicationContext(), "Bluetooth", Toast.LENGTH_LONG);
-                availBTDev.setText("Start transfer");
+                availBTDev.setText("Start transfer: ");
                 availBTDev.show();
                 BluetoothDevice btd = null;
+
                 for (BluetoothDevice bt : pairedBtDevices) {
                     if (bt.getName().equals(selectedDeviceName)) {
                         btd = bt;
@@ -118,45 +125,35 @@ public class FullscreenActivity extends AppCompatActivity implements BTSelectorD
                         break;
                     } else {
                         Log.v("Device: ", bt.getName() + " " + selectedDeviceName);
-
                     }
                 }
-                btd = pairedBtDevices.iterator().next();
+                if (!pairedBtDevices.isEmpty()) {
+                    btd = pairedBtDevices.iterator().next();
+                }
                 //fetch a list of selected media files
-                ArrayList<ImageItem> imgList = adapter.getImageItemsList();
-                ImageItem itm = imgList.get(0);
-                BTService.sendFile3(btd, itm.thumbPath, getApplicationContext());
-                /*
-                //for each file
-                for(ImageItem it: imgList){
-                    Log.v("ImgItm:",String.valueOf(it.selected));
-                    if(it.selected){//load and convert file
-                        byte[] byteRep = msu.loadImageAsByteArray(it.thumbPath);
-                        Log.v("ReadyOrNot","bytearray: "+byteRep.length);
-                        //transfer file to recipent device
-                        tModel.pushImagePath(it.thumbPath);
-                        BTService.sendFile(btd, it.thumbPath, getApplicationContext());
+                //    ArrayList<ImageItem> imgList = ((selectItemsInterface)adapter).getImageItemsList();
+
+                ArrayList<String> selected = new ArrayList<String>();
+                for (ImageItem itm : ((selectItemsInterface) adapter).getImageItemsList()) {
+                    if (itm.selected) {
+                        selected.add(itm.thumbPath);
+                        Log.v("add to que ", itm.thumbPath);
                     }
                 }
-                Log.v("Initalizing transfer to",btd.getName());
-                ConnectThread ct = new ConnectThread(btd, tModel);
-                ct.run();
-*/
-
-
+                BTService.sendFile3(btd, selected, getApplicationContext());
             }
         });
 
-        //Initialize spinners
-        modeSpinner = (Spinner)findViewById(R.id.spinMode);
-        selectTypeSpinner=(Spinner)findViewById(R.id.spinSelect);
-        ArrayAdapter<CharSequence> arrAdaptMode = ArrayAdapter.createFromResource(this,R.array.listmode,R.layout.support_simple_spinner_dropdown_item);
+        //Initialize select mode spinner
+        modeSpinner = findViewById(R.id.spinMode);
+        selectTypeSpinner = findViewById(R.id.spinSelect);
+
+        ArrayAdapter<CharSequence> arrAdaptMode = ArrayAdapter.createFromResource(this, R.array.listmode, R.layout.support_simple_spinner_dropdown_item);
         arrAdaptMode.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         modeSpinner.setAdapter(arrAdaptMode);
         ArrayAdapter<CharSequence> arrAdaptSelect = ArrayAdapter.createFromResource(this, R.array.spinnoptions, R.layout.support_simple_spinner_dropdown_item);
         arrAdaptSelect.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         selectTypeSpinner.setAdapter(arrAdaptSelect);
-
         selectTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
@@ -164,42 +161,65 @@ public class FullscreenActivity extends AppCompatActivity implements BTSelectorD
 
                 if (selected.equals("Selected")) {
                     SelectMode = SELECTMODE_SELECTED;
+                    ((selectItemsInterface) adapter).selectNone();
+                    adapter.notifyDataSetChanged();
+                    Log.v("Selected ", selected + " " + SelectMode);
                 } else if (selected.equals("All")) {
                     SelectMode = SELECTMODE_ALL;
+                    ((selectItemsInterface) adapter).selectAllImages();
+                    adapter.notifyDataSetChanged();
+                    Log.v("Selected ", selected + " " + SelectMode);
                 }
-                Log.v("Selected ",selected+" "+SelectMode);
+                Log.v("Selected ", selected + " " + SelectMode);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-
             }
         });
+
+
+        /*
+        Initialize selection of display mode
+         */
         modeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
-            String selected = adapterView.getItemAtPosition(pos).toString();
-            Log.v("Selected ",selected);
+                String selected = adapterView.getItemAtPosition(pos).toString();
+                Log.v("Selected ", selected);
 
-                if(selected.equals("Small thumbnail")){
-                    DISPLAYMODE=DISPLAYMODE_SMALLTHUMB;
-                }
-                else if(selected.equals("Large thumbnail")) {
+                if (selected.equals("Small thumbnail")) {
+                    DISPLAYMODE = DISPLAYMODE_SMALLTHUMB;
+                } else if (selected.equals("Large thumbnail")) {
                     DISPLAYMODE=DISPLAYMODE_LARGETHUMB;
-                }
-                else if(selected.equals("List")){
-                    DISPLAYMODE=DISPLAYMODE_LIST;
+                } else if (selected.equals("List")) {
+                    DISPLAYMODE = DISPLAYMODE_LIST;
+                    //Fill the listview with images
+                    listView.setVisibility(View.VISIBLE);
+                    listStub.setVisibility(View.VISIBLE);
+                    ImageListViewAdapter adapter = new ImageListViewAdapter(getApplicationContext(), msu.getImageItems());
+                    listView.setAdapter(adapter);
+                    gridStub.setVisibility(View.GONE);
+                    gridView.setVisibility(View.GONE);
+                    //listView.setAdapter(adapter);
+                } else {// if(selected.equals("Grid")){
+                    listView.setVisibility(View.GONE);
+                    listStub.setVisibility(View.GONE);
+                    gridView.setVisibility(View.VISIBLE);
+                    gridStub.setVisibility(View.VISIBLE);
+                    ImageGridViewAdapter gridAdapter = new ImageGridViewAdapter(getApplicationContext(), msu.getImageItems());
+                    gridView.setAdapter(gridAdapter);
                 }
 
-                Log.v("Selected ",selected+" "+DISPLAYMODE);
-
+                Log.v("Selected ", selected + " " + DISPLAYMODE);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
             }
         });
-//Check permisssions for reading from external storage
+
+        //Check permisssions for reading from external storage
         if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             Log.v("Permission:", "Granted");
 
@@ -209,54 +229,45 @@ public class FullscreenActivity extends AppCompatActivity implements BTSelectorD
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.ACCESS_MEDIA_LOCATION}, 1);
         }
 
-//Fill the listview with images
+        //Fill the listview with images
         adapter = new ImageListViewAdapter(this, msu.getImageItems());
-        ListView lstv = (ListView) findViewById(R.id.lstItems);
-        lstv.setAdapter(adapter);
+        listView = findViewById(R.id.lstItems);
+        listView.setAdapter(adapter);
 
         //Bluetooth CODE section
-        if(!avoid) {
+        if (!avoid) {
             aResLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback() {
-        @Override
-        public void onActivityResult(Object result) {
-            Log.v("ActivityResult", "some callback");
-
-        }
-
+                @Override
+                public void onActivityResult(Object result) {
+                    Log.v("ActivityResult", "some callback");
+                }
             });
-
             initialize();
-}
+        }
     }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-
-
     }
 
     //Init bluetooth fetch available devices
-    public void initialize(){
-         Intent btTurnOn = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-        ActivityResult aResult = new ActivityResult(0,btTurnOn);
+    public void initialize() {
+        Intent btTurnOn = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        ActivityResult aResult = new ActivityResult(0, btTurnOn);
         if (btTurnOn.resolveActivity(getPackageManager()) != null) {
             aResLauncher.launch(btTurnOn);
-        }
-        else{
-            Log.v("BT","could not resolve package manager");
+        } else {
+            Log.v("BT", "Could not resolve activity package manager.");
         }
 
-        // aResLauncher.launch(aResult);
         bAdapter = BluetoothAdapter.getDefaultAdapter();
         pairedBtDevices = bAdapter.getBondedDevices();
         ArrayList<String> btNameDev = new ArrayList<String>();
-        for(BluetoothDevice bt : pairedBtDevices){
+        for (BluetoothDevice bt : pairedBtDevices) {
             btNameDev.add(bt.getName());
-            Log.v("BTDevice:", bt.getName());
+            // Log.v("BTDevice:", bt.getName());
         }
-
-
     }
 
     private void show() {

@@ -41,12 +41,19 @@ public class ImageItem {
     public long getID(){
         Log.v("ID",id);
         if(id==null){
-            Log.v("ID","Null "+id);
+            Log.v("ID", "Null ");
         }
         return Long.parseLong(id);
     }
     public void setThumbPath(String tpath){
         thumbPath = tpath;
     }
-    public String getThumbPath(){return thumbPath;}
+
+    public String getThumbPath() {
+        return thumbPath;
+    }
+
+    public Uri getThumbPathUri() {
+        return Uri.parse(thumbPath);
+    }
 }

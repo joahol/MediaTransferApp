@@ -5,10 +5,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,12 +27,12 @@ ArrayList<ImageItem> items;
 
 public void queryMedia(Context context) {
     items = new ArrayList<ImageItem>();
-    String projection[] = {
+    String[] projection = {
             MediaStore.Images.Media._ID, MediaStore.Images.ImageColumns.DATE_ADDED,
-            MediaStore.Images.Thumbnails.DATA, MediaStore.Images.ImageColumns.SIZE
+            MediaStore.Images.Media.DATA
     };
     String select = MediaStore.Images.Media._ID + "";
-    String selectArgs[] = {};
+    String[] selectArgs = {};
     String orderBy = MediaStore.Images.Media.DATE_ADDED;
 
     //requestPermissions(context,new String[], {Manifest.permission.READ_EXTERNAL_STORAGE},)
@@ -38,15 +41,18 @@ public void queryMedia(Context context) {
             projection, select, selectArgs, orderBy));
 
     String[] names = cursor.getColumnNames();
-
+/*
     for(String s: names){
         Log.v("name:",s);
     }
-    while (cursor.moveToNext()){
-        ImageItem a = new ImageItem(cursor.getString(1));
+*/
+
+    while (cursor.moveToNext()) {
+        ImageItem a = new ImageItem(cursor.getString(0));
         a.setThumbPath(cursor.getString(2));
+
         items.add(a);
-        Log.v("item:", a.getId() + " " + a.getThumbPath() + " " + cursor.getString(3));
+        // Log.v("item:", a.getId() + " " + a.getThumbPath() + " " + cursor.getString(3));
     }
 }
 

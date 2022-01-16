@@ -12,7 +12,7 @@ import java.io.OutputStream;
 
 class ThreadedConnection {
     private byte[] buffer;
-    private BluetoothSocket btSocket;
+    private final BluetoothSocket btSocket;
     private final InputStream inputStream;
     private final OutputStream outputStream;
     Handler handler;

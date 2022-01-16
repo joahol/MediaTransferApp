@@ -16,7 +16,7 @@ import java.nio.ByteBuffer;
  */
 public class ImageTools {
 
-    private Context context;
+    private final Context context;
 
     /*
     @description Constructor for imagetools
@@ -46,9 +46,6 @@ public class ImageTools {
                 next = is.read(bytes);
                 Log.v("B:", String.valueOf(next));
             }
-            //for( int next=0; (next = is.read(bytes)) != -1;){
-            //      bais.write(bytes,0,next);
-            //}
 
         } catch (IOException e) {
             e.printStackTrace();

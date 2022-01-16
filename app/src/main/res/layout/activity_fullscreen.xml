@@ -3,9 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/fullscreenBackgroundColor"
+    android:background="@color/gunmetal"
     android:theme="@style/ThemeOverlay.MediaBackup.FullscreenContainer"
-    android:backgroundTint="@color/white"
+
     tools:context=".FullscreenActivity">
 
 
@@ -21,6 +21,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right"
             android:layout_weight="0.5"
+            android:foreground="@color/ghost_white"
+            android:background="@color/minion_yellow"
             android:minHeight="32dp" />
 
         <Spinner
@@ -28,15 +30,34 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
+            android:foreground="@color/ghost_white"
+            android:background="@color/minion_yellow"
             android:minHeight="32dp" />
+
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/lstItems"
+    <LinearLayout
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="50dp"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/lBottom"
-        android:layout_below="@id/lTop"></ListView>
+        android:layout_height="wrap_content">
+
+        <ViewStub
+            android:id="@+id/stub_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inflatedId="@+id/showlayout"
+            android:layout="@layout/imagelist"></ViewStub>
+
+        <ViewStub
+            android:id="@+id/stub_grid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout="@layout/imagegrid"
+            android:inflatedId="@+id/showlayout"></ViewStub>
+    </LinearLayout>
+
     <RelativeLayout
         android:id="@+id/lBottom"
         android:layout_width="match_parent"
@@ -44,20 +65,15 @@
         android:orientation="horizontal"
         android:layout_alignParentBottom="true"
         >
-<LinearLayout
+
+        <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="65dp"
     android:orientation="horizontal">
-        <Button
-            android:id="@+id/btnConnect"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="0.5"
-            android:text="Connect" />
 
         <Button
             android:id="@+id/btnTransfer"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
             android:text="Transfer"></Button>

@@ -29,7 +29,7 @@ public class ConnectorThread extends Thread {
             // ParcelUuid[] uuids = btDevice.getUuids();
             //temporary = btDevice.createRfcommSocketToServiceRecord(uuids[0].getUuid());
             // temporary = btDevice.createInsecureRfcommSocketToServiceRecord(myuuid);
-            temporary = (BluetoothSocket) btDevice.getClass().getMethod("createRfcommSocket", new Class[]{int.class}).invoke(device, 1);
+            temporary = (BluetoothSocket) btDevice.getClass().getMethod("createRfcommSocket", int.class).invoke(device, 1);
         } catch (Exception e) {
             Log.e("BTHelper", "Issue on creating a bluetooth socket " + e);
         }

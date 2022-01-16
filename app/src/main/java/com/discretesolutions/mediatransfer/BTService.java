@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.Permission;
+import java.util.ArrayList;
 
 
 // Bluetooth profile OPP har verdien 20 i følge
@@ -28,10 +29,10 @@ public class BTService {
     private static final String TAG = "BTService";
     private Handler handler;
 
-    public static interface BTServiceMessages {
-        public static final int READ = 0;
-        public static final int WRITE = 1;
-        public static final int FEEDBACK_USER = 2;
+    public interface BTServiceMessages {
+        int READ = 0;
+        int WRITE = 1;
+        int FEEDBACK_USER = 2;
     }
 
     public void profileTest() {
@@ -68,13 +69,26 @@ public class BTService {
 
     }
 
-    public static void sendFile3(BluetoothDevice btDevice, String[] path, Context context) {
-        Intent share = new Intent((Intent.ACTION_SEND));
-        share.setType("image/jpeg");
+    public static void sendFile3(BluetoothDevice btDevice, ArrayList<String> path, Context context) {
+        Intent share;
+        if (path.size() == 1) {
+            share = new Intent(Intent.ACTION_SEND);
+        } else {
+            share = new Intent(Intent.ACTION_SEND_MULTIPLE);
+        }
+
+        share.setType("image/*");
         share.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         share.setComponent(new ComponentName("com.android.bluetooth", "com.android.bluetooth.opp.BluetoothOppLauncherActivity"));
-        for (int i = 0; i < path.length; i++) {
-            share.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(path[i])));
+        share.setPackage("com.android.bluetooth");
+        if (path.size() == 1) {
+            share.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(path.get(0))));
+        } else {
+            ArrayList<Uri> uris = new ArrayList<Uri>();
+            for (String s : path) {
+                uris.add(Uri.fromFile(new File(s)));
+            }
+            share.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
         }
         context.startActivity(share);
     }

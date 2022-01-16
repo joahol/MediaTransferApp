@@ -12,7 +12,7 @@ public class IncomingThreads extends Thread {
     String name = "mediaservice";
     UUID uuid = UUID.randomUUID();
 
-    private boolean flag = true;
+    private final boolean flag = true;
 
     public IncomingThreads() {
         BluetoothAdapter btadapter = BluetoothAdapter.getDefaultAdapter();

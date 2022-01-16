@@ -12,4 +12,10 @@
     <color name="light_blue_A200">#FF40C4FF</color>
     <color name="light_blue_A400">#FF00B0FF</color>
     <color name="black_overlay">#66000000</color>
+    <color name="minion_yellow">#ffe74c</color>
+    <color name="medium_spring_green">#2ceaa3</color>
+    <color name="blue_munsell">#2d93ad</color>
+    <color name="gunmetal">#2b303a</color>
+    <color name="ghost_white">#f7f7ff</color>
+
 </resources>

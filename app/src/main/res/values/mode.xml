@@ -4,6 +4,7 @@
         <item>Small thumbnail</item>
         <item>Large thumbnail</item>
         <item>List</item>
+        <item>Grid</item>
     </string-array>
 
 </resources>
