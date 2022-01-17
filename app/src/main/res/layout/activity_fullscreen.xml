@@ -21,8 +21,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right"
             android:layout_weight="0.5"
-            android:foreground="@color/ghost_white"
-            android:background="@color/minion_yellow"
+            android:foreground="@color/gunmetal"
+            android:background="@color/ghost_white"
             android:minHeight="32dp" />
 
         <Spinner
@@ -37,11 +37,11 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_marginTop="40dp"
-        android:layout_marginBottom="50dp"
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="50dp"
+        android:layout_marginTop="40dp"
+        android:orientation="vertical">
 
         <ViewStub
             android:id="@+id/stub_list"
@@ -54,8 +54,8 @@
             android:id="@+id/stub_grid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout="@layout/imagegrid"
-            android:inflatedId="@+id/showlayout"></ViewStub>
+            android:inflatedId="@+id/showlayout"
+            android:layout="@layout/imagegrid"></ViewStub>
     </LinearLayout>
 
     <RelativeLayout

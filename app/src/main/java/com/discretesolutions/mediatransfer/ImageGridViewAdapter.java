@@ -43,9 +43,7 @@ public class ImageGridViewAdapter extends BaseAdapter implements ThumbnailConfig
     int screenwidth = 0;
     int screenheight = 0;
     int imgWidth;
-    int numColumns = 5;
-    int padding = 2;
-    int tollerance = 10;
+
 
     public ImageGridViewAdapter(@NonNull Context context, ArrayList<ImageItem> resource) {
         imgItems = resource;
@@ -54,10 +52,8 @@ public class ImageGridViewAdapter extends BaseAdapter implements ThumbnailConfig
         ThumbnailSize = MediaStore.Images.Thumbnails.MINI_KIND;
 
         DisplayMetrics dpm = new DisplayMetrics();
-        //   ((AppCompatActivity)contex).getWindowManager().getDefaultDisplay().getMetrics(dpm);
-        //screenheight = dpm.heightPixels;
         screenwidth = dpm.widthPixels;
-        imgWidth = (screenwidth / numColumns) - (2 * padding);
+        imgWidth = (screenwidth / 5);
     }
 
 
@@ -79,7 +75,7 @@ public class ImageGridViewAdapter extends BaseAdapter implements ThumbnailConfig
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         view = LayoutInflater.from(contex).inflate(R.layout.imagegriditemlayout, viewGroup, false);
-        view.setMinimumWidth((imgWidth / numColumns) - tollerance);
+        //view.setMinimumWidth(imgWidth -50);
         ImageItem imt = (ImageItem) getItem(i);
         ImageView imv = view.findViewById(R.id.imgVThumbnail);
 
@@ -92,31 +88,10 @@ public class ImageGridViewAdapter extends BaseAdapter implements ThumbnailConfig
         BitmapFactory.Options opt = new BitmapFactory.Options();
         opt.inSampleSize = 2;
         opt.inJustDecodeBounds = false;
+        opt.outWidth = imgWidth;
         thumb = MediaStore.Images.Thumbnails.getThumbnail(contex.getContentResolver(), imt.getID(), MediaStore.Images.Thumbnails.MINI_KIND, opt);
-     /*   ExifInterface exif=null;
-        try{
-            exif = new ExifInterface(imt.getThumbPath());
 
-        }catch (IOException ie){}
-        byte[] imageData=exif.getThumbnail();
-        if (imageData!=null)
-            thumb= BitmapFactory.decodeByteArray(imageData,0,imageData.length);
-       */
-        if (thumb == null) {
-            Log.v("thumb", "is null, lets create a new thumb");
-            // thumb = ThumbnailUtils.createImageThumbnail(imt.thumbPath,MediaStore.Images.Thumbnails.MINI_KIND);
-
-        }
-
-        Log.v("ID", imt.getId() + " " + imt.getThumbPath());
         imv.setImageBitmap(thumb);
-        imv.setMaxWidth(imgWidth);
-        imv.setMinimumWidth(imgWidth - (tollerance + padding));
-        imv.setMinimumHeight(imgWidth - (tollerance + padding));
-
-        imv.setMaxHeight(imgWidth);
-        Log.v("Width imv:", String.valueOf(imv.getWidth()));
-        Log.v("Width view:", String.valueOf(view.getWidth()));
         chSelect.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {

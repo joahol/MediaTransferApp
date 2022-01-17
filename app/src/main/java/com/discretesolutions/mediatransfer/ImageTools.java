@@ -10,6 +10,8 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 /*
+    Class to be removed as it solved othervise. The below code is not intended for production
+
     @description ImageTools, is responsible to handle loading images from the device and provides
     methods to convert image to transferable formats.
 
