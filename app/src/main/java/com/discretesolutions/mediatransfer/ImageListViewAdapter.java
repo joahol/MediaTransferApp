@@ -64,19 +64,11 @@ public class ImageListViewAdapter extends BaseAdapter implements ThumbnailConfig
         chSelect.setText(imt.getId());
         chSelect.setChecked((imt.getSelected()));
         Bitmap thumb = null;
-        /*
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-            thumb = createImageThumbnail(imt.getThumbPath(), MediaStore.Images.Thumbnails.MICRO_KIND);
-        }else {//api level < 29
-            thumb = MediaStore.Images.Thumbnails.getThumbnail(cr, imt.getID(), MediaStore.Images.Thumbnails.MICRO_KIND, null);
-        }*/
+        BitmapFactory.Options opt = new BitmapFactory.Options();
+        opt.inSampleSize = 2;
+        opt.inJustDecodeBounds = false;
+        thumb = MediaStore.Images.Thumbnails.getThumbnail(context.getContentResolver(), imt.getID(), MediaStore.Images.Thumbnails.MINI_KIND, opt);
 
-
-        if (ThumbnailSize == MediaStore.Images.Thumbnails.MINI_KIND) {
-            thumb = ThumbnailUtils.createImageThumbnail(String.valueOf(new File(imt.getThumbPath())), MediaStore.Images.Thumbnails.MINI_KIND);
-        } else {
-            thumb = ThumbnailUtils.createImageThumbnail(String.valueOf(new File(imt.getThumbPath())), MediaStore.Images.Thumbnails.MICRO_KIND);
-        }
 
         imv.setImageBitmap(thumb);
         chSelect.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
